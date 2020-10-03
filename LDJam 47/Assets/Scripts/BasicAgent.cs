@@ -29,9 +29,15 @@ public class BasicAgent : MonoBehaviour {
         }
     }
 
+    public void EnergyDamage (BasicAgent agent, float amount) {
+        if (agent == this) {
+            Damage (Mathf.Abs (amount));
+        };
+    }
+
     public void Damage (float damage) {
         float oldHealth = currentHealth;
-        Mathf.Clamp (currentHealth -= damage, healthMinMax.x, healthMinMax.y);
+        currentHealth = Mathf.Clamp (currentHealth -= damage, healthMinMax.x, healthMinMax.y);
         if (oldHealth - currentHealth > 0f) {
             evt_agentDamaged.Invoke (this, oldHealth - currentHealth);
         }
@@ -47,7 +53,7 @@ public class BasicAgent : MonoBehaviour {
     public void Heal (float healAmount) {
         if (alive) {
             float oldHealth = currentHealth;
-            Mathf.Clamp (currentHealth += healAmount, healthMinMax.x, healthMinMax.y);
+            currentHealth = Mathf.Clamp (currentHealth += healAmount, healthMinMax.x, healthMinMax.y);
             if (healAmount > 0f) {
                 evt_agentHealed.Invoke (this, currentHealth - oldHealth);
             }

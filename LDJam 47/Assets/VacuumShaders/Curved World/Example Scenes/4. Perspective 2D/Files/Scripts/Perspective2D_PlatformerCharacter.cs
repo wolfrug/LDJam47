@@ -7,6 +7,7 @@ namespace VacuumShaders.CurvedWorld.Example {
     public class Perspective2D_PlatformerCharacter : MonoBehaviour {
         [SerializeField] private float m_MaxSpeed = 10f; // The fastest the player can travel in the x axis.
         [SerializeField] private float m_JumpForce = 400f; // Amount of force added when the player jumps.
+        public float defaultyGravity = -10f;
         [Range (0, 1)][SerializeField] private float m_CrouchSpeed = .36f; // Amount of maxSpeed applied to crouching movement. 1 = 100%
         [SerializeField] private bool m_AirControl = false; // Whether or not a player can steer while jumping;
         [SerializeField] private LayerMask m_WhatIsGround; // A mask determining what is ground to the character
@@ -83,7 +84,10 @@ namespace VacuumShaders.CurvedWorld.Example {
                 // Add a vertical force to the player.
                 m_Grounded = false;
                 m_Anim.SetBool ("Ground", false);
-                m_Rigidbody2D.AddForce (new Vector2 (0f, m_JumpForce));
+                float actualJumpForce = m_JumpForce;
+                actualJumpForce *= Mathf.Clamp (Physics2D.gravity.y / defaultyGravity, .5f, 1f);
+                Debug.Log ("Actual jump force: " + actualJumpForce);
+                m_Rigidbody2D.AddForce (new Vector2 (0f, actualJumpForce));
             }
         }
 

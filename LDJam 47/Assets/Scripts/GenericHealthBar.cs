@@ -16,7 +16,7 @@ public class GenericHealthBar : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (currentHealth > minMaxHealth.x && currentHealth > 0f) {
-            healthPercentage = Mathf.Clamp (currentHealth / minMaxHealth.y, 0f, 1f);
+            healthPercentage = Mathf.Lerp (0f, 1f, currentHealth / minMaxHealth.y);
         } else {
             healthPercentage = 0f;
         }
