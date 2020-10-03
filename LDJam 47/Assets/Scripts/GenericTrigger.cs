@@ -11,12 +11,16 @@ public class TriggerExited : UnityEvent<GameObject> { }
 
 [System.Serializable]
 public class TriggerStay : UnityEvent<GameObject> { };
+
+[System.Serializable]
+public class TriggerOutOfActivations : UnityEvent<GameObject> { };
 public class GenericTrigger : MonoBehaviour {
 
     public List<string> tags = new List<string> { };
     public TriggerEntered triggerEntered;
     public TriggerExited triggerExited;
     public TriggerStay triggerStay;
+    public TriggerOutOfActivations triggerOutOfActivations;
     public bool useStay = true;
     [Header ("Action times left (negative numbers = infinite). Does -not- apply to Trigger Exit")]
     [SerializeField]
@@ -44,6 +48,9 @@ public class GenericTrigger : MonoBehaviour {
                         triggerEntered.Invoke (other.gameObject);
                         contents.Add (other.gameObject);
                         activationTimes--;
+                        if (activationTimes == 0) {
+                            triggerOutOfActivations.Invoke (gameObject);
+                        }
                     };
 
                     //Debug.Log(other.gameObject);
@@ -68,6 +75,9 @@ public class GenericTrigger : MonoBehaviour {
                         triggerEntered.Invoke (other.gameObject);
                         contents.Add (other.gameObject);
                         activationTimes--;
+                        if (activationTimes == 0) {
+                            triggerOutOfActivations.Invoke (gameObject);
+                        }
                     };
                 };
             }
@@ -94,6 +104,9 @@ public class GenericTrigger : MonoBehaviour {
                             if (activationTimes > 0 || activationTimes < 0) {
                                 triggerStay.Invoke (obj);
                                 activationTimes--;
+                                if (activationTimes == 0) {
+                                    triggerOutOfActivations.Invoke (gameObject);
+                                }
                             };
                         } else {
                             objectsFlaggedForRemoval.Add (obj);

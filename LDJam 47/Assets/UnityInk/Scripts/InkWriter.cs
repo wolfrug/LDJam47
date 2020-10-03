@@ -802,9 +802,15 @@ public class InkWriter : MonoBehaviour {
                 Debug.Log ("Hiding non-main writer.");
             }
         }
+        // USING DOOZY!
+        string eventName = "InkWriter_hide_" + hide.ToString ();
+        Debug.Log ("Sending event name to Doozy: " + eventName);
+        Doozy.Engine.GameEventMessage.SendEvent (eventName);
+        /*
         writerCanvasGroup.alpha = hide ? 0f : 1f;
         writerCanvasGroup.interactable = !hide;
         writerCanvasGroup.blocksRaycasts = !hide;
+        */
         if (hide) {
             onWriterClose.Invoke (this);
         } else {

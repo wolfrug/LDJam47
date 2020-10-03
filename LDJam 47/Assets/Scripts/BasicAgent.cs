@@ -23,7 +23,10 @@ public class BasicAgent : MonoBehaviour {
     public AgentKilled evt_agentKilled;
     // Start is called before the first frame update
     void Start () {
-
+        if (healthBar != null) {
+            healthBar.minMaxHealth = healthMinMax;
+            healthBar.currentHealth = currentHealth;
+        }
     }
 
     public void Damage (float damage) {
