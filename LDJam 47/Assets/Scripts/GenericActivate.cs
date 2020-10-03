@@ -18,7 +18,7 @@ public class GenericActivate : MonoBehaviour {
     public Animator animator;
     public float holdDownTimeSeconds = 0f;
     public float holdDownTimeCurrent = -1f;
-    public string inputButton = "Fire1";
+    public KeyCode inputButton;
     public bool forceNewClickAfterActivate = true;
     private bool forcingNewClick = false;
     // activate the 'switch' event every other time, starting with the non-switch
@@ -109,33 +109,53 @@ public class GenericActivate : MonoBehaviour {
     }
 
     void Update () {
+
         if (awaitingInput && enabled && !forcingNewClick) {
-            if (Input.GetAxis (inputButton) > 0f && holdDownTimeCurrent < 0f) {
+            if (Input.GetKeyDown (inputButton)) {
+                Activate ();
+            }
+        } else {
+            if (forcingNewClick) {
+                if (Input.GetKeyUp (inputButton)) {
+                    forcingNewClick = false;
+                }
+            }
+        }
+        /*
+        if (awaitingInput && enabled && !forcingNewClick) {
+            
+            if (Input.GetKeyDown (inputButton) && holdDownTimeCurrent < 0f) {
                 activateStartedEvent.Invoke (agent, this);
                 holdDownTimeCurrent = 0f;
                 if (animator != null) {
                     animator.SetTrigger ("fill");
                 }
-            } else if (Input.GetAxis (inputButton) > 0f && holdDownTimeCurrent >= 0f) {
+            } else if (Input.GetKeyDown (inputButton) && holdDownTimeCurrent >= 0f) {
                 holdDownTimeCurrent += Time.deltaTime;
-                animator.SetFloat ("speed", 1f / holdDownTimeSeconds);
+                if (animator != null) {
+                    animator.SetFloat ("speed", 1f / holdDownTimeSeconds);
+                };
                 if (holdDownTimeCurrent >= holdDownTimeSeconds) {
                     Activate ();
                     holdDownTimeCurrent = -1f;
                 }
             } else if (holdDownTimeCurrent > 0f) {
                 holdDownTimeCurrent -= Time.deltaTime;
-                animator.SetFloat ("speed", -1f / holdDownTimeSeconds);
+                if (animator != null) {
+                    animator.SetFloat ("speed", -1f / holdDownTimeSeconds);
+                };
             }
         } else {
             if (holdDownTimeCurrent > 0f) {
                 holdDownTimeCurrent = -1f;
                 activateCancelledEvent.Invoke (agent, this);
-                animator.SetTrigger ("empty");
+                if (animator != null) {
+                    animator.SetTrigger ("empty");
+                };
             };
-            if (forcingNewClick && Input.GetAxis (inputButton) <= 0f) {
+            if (forcingNewClick && Input.GetKeyUp (inputButton)) {
                 forcingNewClick = false;
             }
-        }
+        }*/
     }
 }
