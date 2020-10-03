@@ -19,7 +19,10 @@
 			<value>25</value>
 		</property>
 		<property name="initialValue">
-			<value>1</value>
+			<value>25</value>
+		</property>
+		<property name="seekSpeed">
+			<value>2</value>
 		</property>
 	</object>
 </objects>

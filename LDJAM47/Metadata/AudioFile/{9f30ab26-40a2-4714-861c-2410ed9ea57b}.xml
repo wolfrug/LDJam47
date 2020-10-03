@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.00.00">
+	<object class="AudioFile" id="{9f30ab26-40a2-4714-861c-2410ed9ea57b}">
+		<property name="assetPath">
+			<value>LDJ47_SFX2.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.78034013605442176</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{9210a14e-a6cf-421a-b1b6-cdea2b6fe929}</destination>
+		</relationship>
+	</object>
+</objects>
