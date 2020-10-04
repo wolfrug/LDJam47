@@ -31,7 +31,7 @@ public class BasicAgent : MonoBehaviour {
 
     public void EnergyDamage (BasicAgent agent, float amount) {
         if (agent == this) {
-            Damage (Mathf.Abs (amount) * 0.5f);
+            Damage (Mathf.Abs (amount) * 0.1f);
         };
     }
 
