@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using Doozy.Engine.Progress;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class TaskProgressed : UnityEvent<TaskData, float> { }
+
 public class TaskMenuController : MonoBehaviour {
+    public static TaskMenuController instance;
     public TaskData[] loopingTasks;
     public GameObject percentageTaskPrefab;
     public GameObject nrTaskPrefab;
     public Transform taskParent;
+    public Animator allTasksCompleteAnimator;
+    public TaskData finalTask;
     public TextMeshProUGUI tasksLeftText;
     private List<GameObject> spawnedTasks = new List<GameObject> { };
     private Dictionary<TaskData, Progressor> taskListDict = new Dictionary<TaskData, Progressor> { };
@@ -17,6 +24,16 @@ public class TaskMenuController : MonoBehaviour {
     public List<TaskData> finishedTasks;
     public List<TaskData> unfinishedTasks;
     public List<TaskData> failedTasks;
+
+    public TaskProgressed evt_taskprogressed;
+
+    void Awake () {
+        if (instance == null) {
+            instance = this;
+        } else {
+            Destroy (gameObject);
+        }
+    }
     // Start is called before the first frame update
     void Start () {
         PopulateList ();
@@ -39,6 +56,14 @@ public class TaskMenuController : MonoBehaviour {
     void UpdateText () {
         tasksLeftText.text = string.Format ("Assigned Tasks: ({0}/{1})", finishedTasks.Count + failedTasks.Count, unfinishedTasks.Count + finishedTasks.Count + failedTasks.Count);
     }
+    void CheckTaskCompletion () {
+        if (unfinishedTasks.Count == 0) {
+            allTasksCompleteAnimator.SetBool ("AllComplete", true);
+            SpawnTask (finalTask);
+        } else {
+            allTasksCompleteAnimator.SetBool ("AllComplete", false);
+        }
+    }
 
     void SpawnTask (TaskData data) {
         GameObject spawnedObject = Instantiate (data.taskPrefab, taskParent);
@@ -46,6 +71,9 @@ public class TaskMenuController : MonoBehaviour {
         Debug.Log (progComponent.ProgressTargets[1]);
         TextMeshProUGUI textTarget = spawnedObject.transform.Find ("AnimatorParent/DescriptionText").GetComponent<TextMeshProUGUI> ();
         textTarget.text = data.description;
+        if (!data.isPercentageTask) {
+            (progComponent.ProgressTargets[1] as ProgressTargetTextMeshPro).Suffix = " / " + data.targetValue.ToString ();
+        }
         // We'd do this dynamically but without intellisense it takes too long
         //progComponent.SetMax(data.targetValue);
         //progComponent.SetMin(0f);
@@ -59,6 +87,7 @@ public class TaskMenuController : MonoBehaviour {
         taskListDict.TryGetValue (data, out outProgressor);
         if (outProgressor != null) {
             outProgressor.SetProgress (toAmount);
+            evt_taskprogressed.Invoke (data, toAmount);
             AnimateTask (data);
             if (toAmount >= 1f) {
                 DelayActionUntil (new System.Func<bool> (() => outProgressor.Progress >= 1f), new System.Action (() => FinishTask (data)));
@@ -124,6 +153,7 @@ public class TaskMenuController : MonoBehaviour {
             unfinishedTasks.Remove (data);
         }
         UpdateText ();
+        CheckTaskCompletion ();
     }
     public void FailTask (TaskData data) {
         Animator targetAnimator;
@@ -139,6 +169,7 @@ public class TaskMenuController : MonoBehaviour {
             unfinishedTasks.Remove (data);
         }
         UpdateText ();
+        CheckTaskCompletion ();
     }
 
     [NaughtyAttributes.Button]
