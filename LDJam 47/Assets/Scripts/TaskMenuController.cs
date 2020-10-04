@@ -12,17 +12,20 @@ public class TaskProgressed : UnityEvent<TaskData, float> { }
 public class TaskMenuController : MonoBehaviour {
     public static TaskMenuController instance;
     public TaskData[] loopingTasks;
-    public GameObject percentageTaskPrefab;
-    public GameObject nrTaskPrefab;
+    public List<TaskProgressor> allTaskProgressors;
     public Transform taskParent;
     public Animator allTasksCompleteAnimator;
     public TaskData finalTask;
     bool isOnFinalTask;
+    public GameObject offScreenArrowPrefab;
+    public Transform playerTransform;
     public GameObject finalTaskInteractorObject;
     public TextMeshProUGUI tasksLeftText;
     private List<GameObject> spawnedTasks = new List<GameObject> { };
     private Dictionary<TaskData, Progressor> taskListDict = new Dictionary<TaskData, Progressor> { };
     private Dictionary<TaskData, Animator> taskListAnimatorDict = new Dictionary<TaskData, Animator> { };
+    private Dictionary<TaskData, TaskProgressor> taskProgressorDict = new Dictionary<TaskData, TaskProgressor> { };
+    private Dictionary<TaskData, OffScreenArrow> arrowsDict = new Dictionary<TaskData, OffScreenArrow> { };
     public List<TaskData> finishedTasks;
     public List<TaskData> unfinishedTasks;
     public List<TaskData> failedTasks;
@@ -38,8 +41,19 @@ public class TaskMenuController : MonoBehaviour {
     }
     // Start is called before the first frame update
     void Start () {
+        foreach (TaskProgressor tp in allTaskProgressors) {
+            taskProgressorDict.Add (tp.targetData, tp);
+        }
         PopulateList ();
         finalTaskInteractorObject.SetActive (false);
+    }
+
+    [NaughtyAttributes.Button]
+    void AutoAddTaskProgressors () {
+        allTaskProgressors.Clear ();
+        foreach (TaskProgressor tp in FindObjectsOfType<TaskProgressor> ()) {
+            allTaskProgressors.Add (tp);
+        }
     }
 
     public void PopulateList () {
@@ -91,6 +105,43 @@ public class TaskMenuController : MonoBehaviour {
         ShowTask (data);
     }
 
+    public void AddTaskArrow (TaskData data) { // adds an arrow that points towards the task!
+        if (!arrowsDict.ContainsKey (data)) {
+            TaskProgressor target;
+            taskProgressorDict.TryGetValue (data, out target);
+            if (target != null) {
+                OffScreenArrow arrow = Instantiate (offScreenArrowPrefab).GetComponent<OffScreenArrow> ();
+                arrow.lineRenderertarget = playerTransform;
+                arrow.widgetTarget = playerTransform;
+                arrow.origin = target.transform;
+                arrowsDict.Add (data, arrow);
+            }
+        } else {
+            OffScreenArrow arrow;
+            arrowsDict.TryGetValue (data, out arrow);
+            if (arrow != null) {
+                arrow.gameObject.SetActive (true);
+            } else {
+                arrowsDict.Remove (data);
+            }
+        }
+    }
+    public void RemoveTaskArrow (TaskData data) { // removes the arrow (if it exists) that points towards the task!
+        Debug.Log ("Attempting to remove arrow for data " + data.name_);
+        if (arrowsDict.ContainsKey (data)) {
+            Debug.Log ("Found the key!");
+            OffScreenArrow arrow;
+            arrowsDict.TryGetValue (data, out arrow);
+            if (arrow != null) {
+                Debug.Log ("Setting to inactive, yes!");
+                arrow.gameObject.SetActive (false);
+            } else {
+                Debug.Log ("Somehow did not find it??");
+                arrowsDict.Remove (data);
+            }
+        }
+    }
+
     public void SetProgressTask (TaskData data, float toAmount) {
         Progressor outProgressor;
         taskListDict.TryGetValue (data, out outProgressor);
@@ -112,6 +163,7 @@ public class TaskMenuController : MonoBehaviour {
         if (targetAnimator != null) {
             targetAnimator.SetBool ("Active", true);
         }
+        AddTaskArrow (data);
     }
     void HideTask (TaskData data) {
         Animator targetAnimator;
@@ -119,6 +171,7 @@ public class TaskMenuController : MonoBehaviour {
         if (targetAnimator != null) {
             targetAnimator.SetBool ("Active", false);
         }
+        RemoveTaskArrow (data);
     }
     void AnimateTask (TaskData data) {
         Animator targetAnimator;
@@ -141,6 +194,7 @@ public class TaskMenuController : MonoBehaviour {
             unfinishedTasks.Remove (data);
         }
         UpdateText ();
+        RemoveTaskArrow (data);
         CheckTaskCompletion ();
     }
     public void FailTask (TaskData data) {
@@ -157,6 +211,7 @@ public class TaskMenuController : MonoBehaviour {
             unfinishedTasks.Remove (data);
         }
         UpdateText ();
+        RemoveTaskArrow (data);
         CheckTaskCompletion ();
     }
 
