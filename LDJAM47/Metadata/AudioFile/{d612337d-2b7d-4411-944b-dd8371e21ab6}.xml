@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.00.00">
+	<object class="AudioFile" id="{d612337d-2b7d-4411-944b-dd8371e21ab6}">
+		<property name="assetPath">
+			<value>LaikaBark6.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.41557823129251703</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{9210a14e-a6cf-421a-b1b6-cdea2b6fe929}</destination>
+		</relationship>
+	</object>
+</objects>
