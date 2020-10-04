@@ -17,6 +17,8 @@ public class TaskMenuController : MonoBehaviour {
     public Transform taskParent;
     public Animator allTasksCompleteAnimator;
     public TaskData finalTask;
+    bool isOnFinalTask;
+    public GameObject finalTaskInteractorObject;
     public TextMeshProUGUI tasksLeftText;
     private List<GameObject> spawnedTasks = new List<GameObject> { };
     private Dictionary<TaskData, Progressor> taskListDict = new Dictionary<TaskData, Progressor> { };
@@ -37,6 +39,7 @@ public class TaskMenuController : MonoBehaviour {
     // Start is called before the first frame update
     void Start () {
         PopulateList ();
+        finalTaskInteractorObject.SetActive (false);
     }
 
     public void PopulateList () {
@@ -57,12 +60,16 @@ public class TaskMenuController : MonoBehaviour {
         tasksLeftText.text = string.Format ("Assigned Tasks: ({0}/{1})", finishedTasks.Count + failedTasks.Count, unfinishedTasks.Count + finishedTasks.Count + failedTasks.Count);
     }
     void CheckTaskCompletion () {
-        if (unfinishedTasks.Count == 0) {
-            allTasksCompleteAnimator.SetBool ("AllComplete", true);
-            SpawnTask (finalTask);
-        } else {
-            allTasksCompleteAnimator.SetBool ("AllComplete", false);
-        }
+        if (!isOnFinalTask) {
+            if (unfinishedTasks.Count == 0) {
+                allTasksCompleteAnimator.SetBool ("AllComplete", true);
+                GameManager.instance.ActionWaiter (2f, new System.Action (() => SpawnTask (finalTask)));
+                finalTaskInteractorObject.SetActive (true);
+                isOnFinalTask = true;
+            } else {
+                allTasksCompleteAnimator.SetBool ("AllComplete", false);
+            }
+        };
     }
 
     void SpawnTask (TaskData data) {
@@ -73,12 +80,14 @@ public class TaskMenuController : MonoBehaviour {
         textTarget.text = data.description;
         if (!data.isPercentageTask) {
             (progComponent.ProgressTargets[1] as ProgressTargetTextMeshPro).Suffix = " / " + data.targetValue.ToString ();
+            (progComponent.ProgressTargets[1] as ProgressTargetTextMeshPro).Multiplier = data.targetValue;
         }
         // We'd do this dynamically but without intellisense it takes too long
         //progComponent.SetMax(data.targetValue);
         //progComponent.SetMin(0f);
         taskListDict.Add (data, progComponent);
         taskListAnimatorDict.Add (data, spawnedObject.GetComponent<Animator> ());
+        spawnedTasks.Add (spawnedObject);
         ShowTask (data);
     }
 
@@ -90,32 +99,11 @@ public class TaskMenuController : MonoBehaviour {
             evt_taskprogressed.Invoke (data, toAmount);
             AnimateTask (data);
             if (toAmount >= 1f) {
-                DelayActionUntil (new System.Func<bool> (() => outProgressor.Progress >= 1f), new System.Action (() => FinishTask (data)));
+                GameManager.instance.DelayActionUntil (new System.Func<bool> (() => outProgressor.Progress >= 1f), new System.Action (() => FinishTask (data)));
             }
         } else {
             Debug.LogWarning ("No such progressor found!");
         }
-    }
-    public void ActionWaiter (float timeToWait, System.Action callBack) {
-        StartCoroutine (ActionWaiterCoroutine (timeToWait, callBack));
-    }
-    IEnumerator ActionWaiterCoroutine (float timeToWait, System.Action callBack) {
-        yield return new WaitForSeconds (timeToWait);
-        callBack.Invoke ();
-    }
-
-    public void DelayActionUntil (System.Func<bool> condition, System.Action callBack) {
-        StartCoroutine (DelayActionCoroutine (condition, callBack));
-    }
-    IEnumerator DelayActionCoroutine (System.Func<bool> condition, System.Action callBack) {
-
-        bool outvar = false;
-        while (!outvar) {
-            outvar = condition ();
-            yield return new WaitForSeconds (0.1f);
-        };
-        Debug.Log ("Delayed action finished?!");
-        callBack.Invoke ();
     }
 
     void ShowTask (TaskData data) {
