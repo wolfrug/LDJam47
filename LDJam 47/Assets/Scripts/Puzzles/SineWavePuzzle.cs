@@ -8,8 +8,8 @@ public class SineWavePuzzle : MonoBehaviour {
     public RectTransform targetSineWaveParent;
     public RectTransform playerSineWaveParent;
 
-    public Vector2 maxLeftRight = new Vector2 (100f, 100f);
-    public Vector2 maxUpDown = new Vector2 (100f, 100f);
+    public Vector2 maxLeftRight = new Vector2 (-2, 2f);
+    public Vector2 maxUpDown = new Vector2 (0.2f, 2.6f);
     void Start () {
 
     }
@@ -20,10 +20,10 @@ public class SineWavePuzzle : MonoBehaviour {
     }
 
     public void TurnHorizontal (float turn) {
-        playerSineWaveParent.localScale = new Vector3 (playerSineWaveParent.localScale.x + turn, playerSineWaveParent.localScale.y, playerSineWaveParent.localScale.z);
+        playerSineWaveParent.localScale = new Vector3 (Mathf.Clamp (turn, maxLeftRight.x, maxLeftRight.y), playerSineWaveParent.localScale.y, playerSineWaveParent.localScale.z);
     }
     public void TurnVertical (float turn) {
-        playerSineWaveParent.localScale = new Vector3 (playerSineWaveParent.localScale.x, playerSineWaveParent.localScale.y + turn, playerSineWaveParent.localScale.z);
+        playerSineWaveParent.localScale = new Vector3 (playerSineWaveParent.localScale.x, Mathf.Clamp (turn, maxUpDown.x, maxUpDown.y), playerSineWaveParent.localScale.z);
     }
 
 }
