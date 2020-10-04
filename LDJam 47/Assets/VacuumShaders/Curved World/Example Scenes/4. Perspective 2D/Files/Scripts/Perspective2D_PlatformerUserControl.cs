@@ -5,6 +5,7 @@ namespace VacuumShaders.CurvedWorld.Example {
     [RequireComponent (typeof (Perspective2D_PlatformerCharacter))]
     public class Perspective2D_PlatformerUserControl : MonoBehaviour {
         public EnergyController energyController;
+        public FMOD_Controller soundController;
         public float jumpCost = -1f;
         public float moveMultiplier = 0.5f;
         private Perspective2D_PlatformerCharacter m_Character;
@@ -58,6 +59,7 @@ namespace VacuumShaders.CurvedWorld.Example {
             }
             m_Jump = false;
             energyController.ChangeEnergy ((Mathf.Abs (h) * -1f) * moveMultiplier);
+            soundController.SetValue (m_Character.m_Rigidbody2D.velocity.magnitude);
         }
 
         public void UIJumpButtonOn () {

@@ -8,7 +8,7 @@ public class Jetpack : MonoBehaviour {
     bool isFlying = false;
 
     public EnergyController energyController;
-    public FMODUnity.StudioEventEmitter soundEmitter;
+    public FMOD_Controller soundEmitter;
     public float jetPackEnergyCost = 0.01f;
 
     bool active = true;
@@ -31,8 +31,8 @@ public class Jetpack : MonoBehaviour {
             m_jumping = false;
         }
     }
-    void JetPackSound (bool on) {
-        if (on) { soundEmitter.Play (); } else { soundEmitter.Stop (); };
+    void JetPackSound () {
+        // Maybe something here I dunno who cares
     }
     // Update is called once per frame
     void FixedUpdate () {
@@ -43,13 +43,13 @@ public class Jetpack : MonoBehaviour {
             };
             if (!isFlying) {
                 jetPackParticles.Play (true);
-                JetPackSound (true);
+                //JetPackSound (true);
                 isFlying = true;
             };
         } else {
             jetPackParticles.Stop (true);
             isFlying = false;
-            JetPackSound (false);
+            //JetPackSound (false);
         };
     }
 }

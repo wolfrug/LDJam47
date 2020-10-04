@@ -8,6 +8,7 @@ public class FMOD_Controller : MonoBehaviour {
     public float maxValue = 25;
     public string valueName = "Gravity";
     public float currentValue = 10;
+    public float currentEffectiveValue;
     public StudioEventEmitter emitter;
     // Start is called before the first frame update
     void Awake () {
@@ -27,7 +28,7 @@ public class FMOD_Controller : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        float currentEffectiveValue = Mathf.Lerp (minValue, maxValue, currentValue);
+        currentEffectiveValue = Mathf.Lerp (minValue, maxValue, currentValue);
         emitter.SetParameter (valueName, currentEffectiveValue);
     }
 }
