@@ -39,7 +39,7 @@ namespace VacuumShaders.CurvedWorld.Example {
                 if (colliders[i].gameObject != gameObject)
                     m_Grounded = true;
             }
-            m_Anim.SetBool ("Ground", m_Grounded);
+            //m_Anim.SetBool ("Ground", m_Grounded);
 
             // Set the vertical animation
             m_Anim.SetFloat ("vSpeed", m_Rigidbody2D.velocity.y);
@@ -47,15 +47,15 @@ namespace VacuumShaders.CurvedWorld.Example {
 
         public void Move (float move, bool crouch, bool jump) {
             // If crouching, check to see if the character can stand up
-            if (!crouch && m_Anim.GetBool ("Crouch")) {
-                // If the character has a ceiling preventing them from standing up, keep them crouching
-                if (Physics2D.OverlapCircle (m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround)) {
-                    crouch = true;
-                }
-            }
+            //            if (!crouch && m_Anim.GetBool ("Crouch")) {
+            // If the character has a ceiling preventing them from standing up, keep them crouching
+            //              if (Physics2D.OverlapCircle (m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround)) {
+            //                crouch = true;
+            //          }
+            //    }
 
             // Set whether or not the character is crouching in the animator
-            m_Anim.SetBool ("Crouch", crouch);
+            // m_Anim.SetBool ("Crouch", crouch);
 
             //only control the player if grounded or airControl is turned on
             if (m_Grounded || m_AirControl) {
@@ -63,7 +63,7 @@ namespace VacuumShaders.CurvedWorld.Example {
                 move = (crouch ? move * m_CrouchSpeed : move);
 
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
-                m_Anim.SetFloat ("Speed", Mathf.Abs (move));
+                //  m_Anim.SetFloat ("Speed", Mathf.Abs (move));
 
                 // Move the character
                 m_Rigidbody2D.velocity = new Vector2 (move * m_MaxSpeed, m_Rigidbody2D.velocity.y);
@@ -83,7 +83,7 @@ namespace VacuumShaders.CurvedWorld.Example {
             if (m_Grounded && jump && m_Anim.GetBool ("Ground")) {
                 // Add a vertical force to the player.
                 m_Grounded = false;
-                m_Anim.SetBool ("Ground", false);
+                //   m_Anim.SetBool ("Ground", false);
                 float actualJumpForce = m_JumpForce;
                 actualJumpForce *= Mathf.Clamp (Physics2D.gravity.y / defaultyGravity, .5f, 1f);
                 Debug.Log ("Actual jump force: " + actualJumpForce);

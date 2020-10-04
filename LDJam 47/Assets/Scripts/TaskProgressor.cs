@@ -1,11 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+[System.Serializable]
+public class TaskFinished : UnityEvent<TaskProgressor> { }
+
+[System.Serializable]
+public class TaskStarted : UnityEvent<TaskProgressor> { }
 
 public class TaskProgressor : MonoBehaviour {
     public TaskData targetData;
     public float currentTaskProgress = 0f;
-    public float maxTaskProgress = 1f;
+    public float progressGivenPerPuzzleSuccess = 1f;
+    private float maxTaskProgress = 1f;
+    public bool disablePlayerMovement = true;
+    public TaskStarted evt_taskStarted;
+    public TaskFinished evt_taskFinished;
+
+    //public string TaskEventName = "MemoryPuzzle_Start";
     // Start is called before the first frame update
     void Start () {
         currentTaskProgress = 0f;
@@ -13,6 +26,21 @@ public class TaskProgressor : MonoBehaviour {
             maxTaskProgress = 1f;
         } else {
             maxTaskProgress = targetData.targetValue;
+        }
+    }
+
+    public void StartTask () {
+        GameManager.currentProgressor = this;
+        Doozy.Engine.GameEventMessage.SendEvent (targetData.puzzleEventName);
+        evt_taskStarted.Invoke (this);
+        if (disablePlayerMovement) {
+            GameManager.instance.EnablePlayerControl (false);
+        }
+    }
+    public void FinishTask () {
+        evt_taskFinished.Invoke (this);
+        if (disablePlayerMovement) {
+            GameManager.instance.EnablePlayerControl (true);
         }
     }
 

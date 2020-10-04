@@ -5,6 +5,7 @@ using UnityEngine;
 public class TaskData : ScriptableObjectBase {
 
     public string description;
+    public string puzzleEventName = "MemoryPuzzle_Start";
     public float targetValue;
     public bool isPercentageTask = true;
     public GameObject taskPrefab;

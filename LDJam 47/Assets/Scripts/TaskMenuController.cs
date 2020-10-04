@@ -127,34 +127,36 @@ public class TaskMenuController : MonoBehaviour {
         }
     }
     public void RemoveTaskArrow (TaskData data) { // removes the arrow (if it exists) that points towards the task!
-        Debug.Log ("Attempting to remove arrow for data " + data.name_);
+        // Debug.Log ("Attempting to remove arrow for data " + data.name_);
         if (arrowsDict.ContainsKey (data)) {
-            Debug.Log ("Found the key!");
+            //   Debug.Log ("Found the key!");
             OffScreenArrow arrow;
             arrowsDict.TryGetValue (data, out arrow);
             if (arrow != null) {
-                Debug.Log ("Setting to inactive, yes!");
+                //     Debug.Log ("Setting to inactive, yes!");
                 arrow.gameObject.SetActive (false);
             } else {
-                Debug.Log ("Somehow did not find it??");
+                //   Debug.Log ("Somehow did not find it??");
                 arrowsDict.Remove (data);
             }
         }
     }
 
     public void SetProgressTask (TaskData data, float toAmount) {
-        Progressor outProgressor;
-        taskListDict.TryGetValue (data, out outProgressor);
-        if (outProgressor != null) {
-            outProgressor.SetProgress (toAmount);
-            evt_taskprogressed.Invoke (data, toAmount);
-            AnimateTask (data);
-            if (toAmount >= 1f) {
-                GameManager.instance.DelayActionUntil (new System.Func<bool> (() => outProgressor.Progress >= 1f), new System.Action (() => FinishTask (data)));
+        if (!failedTasks.Contains (data) || finishedTasks.Contains (data)) {
+            Progressor outProgressor;
+            taskListDict.TryGetValue (data, out outProgressor);
+            if (outProgressor != null) {
+                outProgressor.SetProgress (toAmount);
+                evt_taskprogressed.Invoke (data, toAmount);
+                AnimateTask (data);
+                if (toAmount >= 1f) {
+                    GameManager.instance.DelayActionUntil (new System.Func<bool> (() => outProgressor.Progress >= 1f), new System.Action (() => FinishTask (data)));
+                }
+            } else {
+                Debug.LogWarning ("No such progressor found!");
             }
-        } else {
-            Debug.LogWarning ("No such progressor found!");
-        }
+        };
     }
 
     void ShowTask (TaskData data) {
@@ -181,38 +183,42 @@ public class TaskMenuController : MonoBehaviour {
         }
     }
     public void FinishTask (TaskData data) {
-        Animator targetAnimator;
-        taskListAnimatorDict.TryGetValue (data, out targetAnimator);
-        if (targetAnimator != null) {
-            targetAnimator.SetBool ("Failed", false);
-            targetAnimator.SetBool ("Completed", true);
-        }
-        if (!finishedTasks.Contains (data)) {
-            finishedTasks.Add (data);
-        }
-        if (unfinishedTasks.Contains (data)) {
-            unfinishedTasks.Remove (data);
-        }
-        UpdateText ();
-        RemoveTaskArrow (data);
-        CheckTaskCompletion ();
+        if (!finishedTasks.Contains (data) || failedTasks.Contains (data)) {
+            Animator targetAnimator;
+            taskListAnimatorDict.TryGetValue (data, out targetAnimator);
+            if (targetAnimator != null) {
+                targetAnimator.SetBool ("Failed", false);
+                targetAnimator.SetBool ("Completed", true);
+            }
+            if (!finishedTasks.Contains (data)) {
+                finishedTasks.Add (data);
+            }
+            if (unfinishedTasks.Contains (data)) {
+                unfinishedTasks.Remove (data);
+            }
+            UpdateText ();
+            RemoveTaskArrow (data);
+            CheckTaskCompletion ();
+        };
     }
     public void FailTask (TaskData data) {
-        Animator targetAnimator;
-        taskListAnimatorDict.TryGetValue (data, out targetAnimator);
-        if (targetAnimator != null) {
-            targetAnimator.SetBool ("Failed", true);
-            targetAnimator.SetBool ("Completed", false);
-        }
-        if (!failedTasks.Contains (data)) {
-            failedTasks.Add (data);
-        }
-        if (unfinishedTasks.Contains (data)) {
-            unfinishedTasks.Remove (data);
-        }
-        UpdateText ();
-        RemoveTaskArrow (data);
-        CheckTaskCompletion ();
+        if (!finishedTasks.Contains (data) || failedTasks.Contains (data)) {
+            Animator targetAnimator;
+            taskListAnimatorDict.TryGetValue (data, out targetAnimator);
+            if (targetAnimator != null) {
+                targetAnimator.SetBool ("Failed", true);
+                targetAnimator.SetBool ("Completed", false);
+            }
+            if (!failedTasks.Contains (data)) {
+                failedTasks.Add (data);
+            }
+            if (unfinishedTasks.Contains (data)) {
+                unfinishedTasks.Remove (data);
+            }
+            UpdateText ();
+            RemoveTaskArrow (data);
+            CheckTaskCompletion ();
+        };
     }
 
     [NaughtyAttributes.Button]

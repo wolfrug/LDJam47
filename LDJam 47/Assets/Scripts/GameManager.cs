@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
 
     public static GameManager instance;
+    public static TaskProgressor currentProgressor;
+    private bool failedTask = false;
+    public MemoryPuzzle memoryPuzzle;
+    public VacuumShaders.CurvedWorld.Example.Perspective2D_PlatformerUserControl playerController;
 
     void Awake () {
         if (instance == null) {
@@ -17,6 +21,12 @@ public class GameManager : MonoBehaviour {
     // Start is called before the first frame update
     void Start () {
         TaskMenuController.instance.evt_taskprogressed.AddListener (FinalLoopTaskComplete);
+        //memoryPuzzle.evt_puzzleSuccess.AddListener (ProgressTask);
+        //memoryPuzzle.evt_puzzleFailed.AddListener (FailTask);
+    }
+
+    public void EnablePlayerControl (bool enable) {
+        playerController.enabled = enable;
     }
 
     void FinalLoopTaskComplete (TaskData data, float completion) {
@@ -24,6 +34,25 @@ public class GameManager : MonoBehaviour {
             Debug.Log ("We win!");
             Doozy.Engine.GameEventMessage.SendEvent ("GameLoopFinished");
         }
+    }
+
+    public void FailTask () {
+        failedTask = true;
+    }
+    public void ProgressTask () {
+        failedTask = false;
+    }
+
+    public void UpdateTasks () {
+        if (currentProgressor != null && failedTask) {
+            TaskMenuController.instance.FailTask (currentProgressor.targetData);
+            currentProgressor.FinishTask ();
+            currentProgressor = null;
+        } else if (currentProgressor != null && !failedTask) {
+            currentProgressor.AddProgress (currentProgressor.progressGivenPerPuzzleSuccess);
+            currentProgressor.FinishTask ();
+            currentProgressor = null;
+        };
     }
 
     public void ActionWaiter (float timeToWait, System.Action callBack) {

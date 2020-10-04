@@ -356,7 +356,7 @@ public class InkWriter : MonoBehaviour {
         // This removes any white space from the text.
         text = text.Trim ();
         if (text != "") {
-            if (!autoContinueNext) // On auto-continues, we don't add the extra linebreaks, as these are generally 'system messages'
+            if (!autoContinueNext && InkWriter.main.story.canContinue) // On auto-continues, we don't add the extra linebreaks, as these are generally 'system messages'
             {
                 text += "\n\n";
             };
