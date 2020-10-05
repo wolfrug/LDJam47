@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.00.00">
 	<object class="AudioFile" id="{db9847a3-398f-485f-92bd-8bb60022291b}">
 		<property name="assetPath">
-			<value>LDJ47_SFX6.wav</value>
+			<value>LDJ47_Fail1.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>
