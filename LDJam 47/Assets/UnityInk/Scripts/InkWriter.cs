@@ -202,7 +202,7 @@ public class InkWriter : MonoBehaviour {
         inkStoryObject.Init ();
         //string savedJson = PlayerPrefs.GetString(inkStoryObject.storyName + "savedInkStory");
         string savedJson = "";
-        if (ES3.KeyExists ("ClayDemo_HasSaved")) {
+        if (ES3.KeyExists ("LDJam47_HasSaved")) {
             if (ES3.KeyExists (inkStoryObject.storyName + "savedInkStory")) {
                 savedJson = ES3.Load<string> (inkStoryObject.storyName + "savedInkStory");
             };
@@ -677,6 +677,8 @@ public class InkWriter : MonoBehaviour {
                         if (returnValue != null) {
                             // Neat, let's clean the text and set it! (note that we do not care if it's interactable or not)
                             string newText = text.Replace (matches[i].Value, "").Replace ("[]", "");
+                            // Let's trim it too
+                            newText.Trim ();
                             returnValue.text = newText;
                             Debug.Log ("Found text and changed its text to " + newText);
                             break;

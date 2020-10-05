@@ -14,7 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetData: {fileID: 11400000, guid: 3dab9e36df4fdba40b9f7a23c6cf0a55, type: 2}
   currentTaskProgress: 0
-  maxTaskProgress: 1
+  progressGivenPerPuzzleSuccess: 1
+  disablePlayerMovement: 1
+  evt_taskStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  evt_taskFinished:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &366413661971959451
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -145,12 +152,12 @@ PrefabInstance:
     - target: {fileID: 4505024047385035244, guid: 45325de06a22e2143b3771fe250a283f,
         type: 3}
       propertyPath: activateEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: AddProgress
+      value: StartTask
       objectReference: {fileID: 0}
     - target: {fileID: 4505024047385035244, guid: 45325de06a22e2143b3771fe250a283f,
         type: 3}
       propertyPath: activateEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4505024047385035244, guid: 45325de06a22e2143b3771fe250a283f,
         type: 3}

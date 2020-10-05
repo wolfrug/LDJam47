@@ -80,12 +80,12 @@ PrefabInstance:
     - target: {fileID: 5960252622792542569, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 260.47717
+      value: 214.61176
       objectReference: {fileID: 0}
     - target: {fileID: 5960252622792542569, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 39.45874
+      value: 22.5307
       objectReference: {fileID: 0}
     - target: {fileID: 5960252622792542569, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
@@ -120,12 +120,22 @@ PrefabInstance:
     - target: {fileID: 5960252623271529480, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -76.23
+      value: -32.75
       objectReference: {fileID: 0}
     - target: {fileID: 5960252623271529480, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 80.770386
+      value: 65.50012
+      objectReference: {fileID: 0}
+    - target: {fileID: 5960252623271529480, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0000052452
+      objectReference: {fileID: 0}
+    - target: {fileID: 5960252623271529480, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 22.530739
       objectReference: {fileID: 0}
     - target: {fileID: 5960252623271529481, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
@@ -172,20 +182,25 @@ PrefabInstance:
       propertyPath: m_firstOverflowCharacterIndex
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 5960252623271529482, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
+        type: 3}
+      propertyPath: m_fontSize
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 5960252624544923005, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 71.45396
+      value: 74.317
       objectReference: {fileID: 0}
     - target: {fileID: 5960252624544923005, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 143.8617
+      value: 149.58862
       objectReference: {fileID: 0}
     - target: {fileID: 5960252624544923006, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5960252624544923006, guid: 507b6224cd2fb754e9d5b5d9c10ad65b,
         type: 3}

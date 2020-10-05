@@ -12,6 +12,7 @@ public class TaskProgressed : UnityEvent<TaskData, float> { }
 public class TaskMenuController : MonoBehaviour {
     public static TaskMenuController instance;
     public TaskData[] loopingTasks;
+    public int randomTaskNumber = 4;
     public List<TaskProgressor> allTaskProgressors;
     public Transform taskParent;
     public Animator allTasksCompleteAnimator;
@@ -63,9 +64,15 @@ public class TaskMenuController : MonoBehaviour {
         foreach (GameObject obj in spawnedTasks) {
             Destroy (obj);
         }
+        List<TaskData> allTasksCopy = new List<TaskData> { };
         foreach (TaskData data in loopingTasks) {
-            SpawnTask (data);
-            unfinishedTasks.Add (data);
+            allTasksCopy.Add (data);
+        }
+        for (int i = 0; i < randomTaskNumber; i++) {
+            TaskData randomTask = allTasksCopy[Random.Range (0, allTasksCopy.Count)];
+            SpawnTask (randomTask);
+            unfinishedTasks.Add (randomTask);
+            allTasksCopy.Remove (randomTask);
         }
         UpdateText ();
     }
@@ -223,8 +230,13 @@ public class TaskMenuController : MonoBehaviour {
 
     [NaughtyAttributes.Button]
     void DebugProgress () {
-        SetProgressTask (loopingTasks[0], 1f);
-        SetProgressTask (loopingTasks[1], 1f);
+        List<TaskData> copyOfTasks = new List<TaskData> { };
+        foreach (TaskData data in unfinishedTasks) {
+            copyOfTasks.Add (data);
+        }
+        for (int i = 0; i < copyOfTasks.Count; i++) {
+            FinishTask (copyOfTasks[i]);
+        }
     }
 
     // Update is called once per frame

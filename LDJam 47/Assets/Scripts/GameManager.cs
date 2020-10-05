@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Doozy.Engine.Progress;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +12,12 @@ public class GameManager : MonoBehaviour {
     private bool failedTask = false;
     public MemoryPuzzle memoryPuzzle;
     public VacuumShaders.CurvedWorld.Example.Perspective2D_PlatformerUserControl playerController;
+    public BasicAgent playerAgent;
+    public TextMeshProUGUI levelText;
+    public Animator levelUpAnimator;
+    private int currentLevel = 1;
+    private float currentXP = 0f;
+    public Progressor mainXPProgressor;
 
     void Awake () {
         if (instance == null) {
@@ -23,6 +31,54 @@ public class GameManager : MonoBehaviour {
         TaskMenuController.instance.evt_taskprogressed.AddListener (FinalLoopTaskComplete);
         //memoryPuzzle.evt_puzzleSuccess.AddListener (ProgressTask);
         //memoryPuzzle.evt_puzzleFailed.AddListener (FailTask);
+        if (ES3.KeyExists ("LDJam47_HasSaved")) {
+            ActionWaiter (1f, new System.Action (() => InkWriter.main.GoToKnot ("daily_cycle")));
+            currentLevel = ES3.Load<int> ("LDJam47_CurrentLevel");
+            currentXP = ES3.Load<float> ("LDJam47_CurrentXP");
+            levelText.text = "Level " + currentLevel;
+            mainXPProgressor.SetProgress (currentXP);
+        }
+    }
+
+    [NaughtyAttributes.Button]
+    void ResetAll () {
+        ES3.DeleteKey ("LDJam47_HasSaved");
+        ES3.DeleteKey ("LDJam47_CurrentLevel");
+        ES3.DeleteKey ("LDJam47_CurrentXP");
+        InkWriter.main.ResetStory ();
+        SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+    }
+
+    public void SaveAndQuit () {
+        ES3.Save<bool> ("LDJam47_HasSaved", true);
+        ES3.Save<int> ("LDJam47_CurrentLevel", currentLevel);
+        ES3.Save<float> ("LDJam47_CurrentXP", currentXP);
+        InkWriter.main.SaveStory ();
+        SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+    }
+
+    public void AddTaskXPRandom () {
+        // Adds some random XP for a task
+        currentXP += Random.Range (0.2f, 0.6f);
+        Debug.Log ("Setting XP progress to " + currentXP);
+        mainXPProgressor.SetProgress (currentXP);
+        if (currentXP >= 1f) {
+            DelayActionUntil (new System.Func<bool> (() => mainXPProgressor.Progress >= 1f), new System.Action (() => LevelUp ()));
+        }
+    }
+
+    public void LevelUp () { // When it reaches 1, level up and reset
+        Debug.Log ("Leveling up! From " + currentLevel + " to " + currentLevel + 1);
+        mainXPProgressor.SetProgress (0f);
+        currentLevel++;
+        currentXP = 0f;
+        levelUpAnimator.SetTrigger ("LevelUp");
+        ActionWaiter (0.5f, new System.Action (() => levelText.text = "Level " + currentLevel));
+    }
+
+    public void PlayerOutOfEnergy () {
+        playerAgent.Kill ();
+        Doozy.Engine.GameEventMessage.SendEvent ("PlayerDead");
     }
 
     public void EnablePlayerControl (bool enable) {
@@ -52,6 +108,7 @@ public class GameManager : MonoBehaviour {
             currentProgressor.AddProgress (currentProgressor.progressGivenPerPuzzleSuccess);
             currentProgressor.FinishTask ();
             currentProgressor = null;
+            AddTaskXPRandom ();
         };
     }
 

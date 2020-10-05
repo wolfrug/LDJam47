@@ -35,6 +35,14 @@ public class BasicAgent : MonoBehaviour {
         };
     }
 
+    public void Kill () {
+        alive = false;
+        evt_agentKilled.Invoke (this);
+        if (animator != null) {
+            animator.SetBool ("Dead", true);
+        }
+    }
+
     public void Damage (float damage) {
         float oldHealth = currentHealth;
         currentHealth = Mathf.Clamp (currentHealth -= damage, healthMinMax.x, healthMinMax.y);
@@ -42,11 +50,7 @@ public class BasicAgent : MonoBehaviour {
             evt_agentDamaged.Invoke (this, oldHealth - currentHealth);
         }
         if (currentHealth <= healthMinMax.x) {
-            alive = false;
-            evt_agentKilled.Invoke (this);
-            if (animator != null) {
-                animator.SetBool ("Dead", true);
-            }
+            Kill ();
         }
         if (healthBar != null) { healthBar.currentHealth = currentHealth; };
     }
