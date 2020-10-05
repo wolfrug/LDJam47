@@ -9,6 +9,8 @@ VAR lastSavedString = ""
 VAR lastSavedTags = ""
 
 VAR points = 0
+VAR loopNumber = 0
+VAR level = 0
 
 ----------
 
@@ -48,9 +50,14 @@ But whatever you do, don't break the loop, or the consequences will be dire.
 
 *[Begin.]->daily_cycle 
 
+==inkActivator
+This is where the ink activator always goes.
+->END
+
 == daily_cycle
 {UseText("DayText")}{today_is}#autoContinue
 
+Level: {level} Loop: {loopNumber}
 Today is {today_is}.
 // how do you need to trigger the task cycles?
 

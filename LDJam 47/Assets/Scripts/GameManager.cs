@@ -31,8 +31,9 @@ public class GameManager : MonoBehaviour {
         TaskMenuController.instance.evt_taskprogressed.AddListener (FinalLoopTaskComplete);
         //memoryPuzzle.evt_puzzleSuccess.AddListener (ProgressTask);
         //memoryPuzzle.evt_puzzleFailed.AddListener (FailTask);
+        //yield return new WaitForSeconds (0.1f);
         if (ES3.KeyExists ("LDJam47_HasSaved")) {
-            ActionWaiter (1f, new System.Action (() => InkWriter.main.GoToKnot ("daily_cycle")));
+            //ActionWaiter (1f, new System.Action (() => InkWriter.main.GoToKnot ("daily_cycle")));
             currentLevel = ES3.Load<int> ("LDJam47_CurrentLevel");
             currentXP = ES3.Load<float> ("LDJam47_CurrentXP");
             levelText.text = "Level " + currentLevel;
@@ -53,8 +54,18 @@ public class GameManager : MonoBehaviour {
         ES3.Save<bool> ("LDJam47_HasSaved", true);
         ES3.Save<int> ("LDJam47_CurrentLevel", currentLevel);
         ES3.Save<float> ("LDJam47_CurrentXP", currentXP);
+        InkWriter.main.story.variablesState["loopNumber"] = (int) InkWriter.main.story.variablesState["loopNumber"] + 1;
+        InkWriter.main.story.variablesState["level"] = currentLevel;
         InkWriter.main.SaveStory ();
         SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+    }
+
+    public void DoNotSaveAndQuit () {
+        SceneManager.LoadScene ("MainMenu");
+    }
+
+    public void WinGame () {
+        SceneManager.LoadScene ("EndScene");
     }
 
     public void AddTaskXPRandom () {

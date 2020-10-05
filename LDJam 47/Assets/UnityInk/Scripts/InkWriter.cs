@@ -139,6 +139,8 @@ public class InkWriter : MonoBehaviour {
     private bool continueStory = true;
     private bool autoContinueNext = false;
 
+    public string eventToGoToInCaseOfLoad = "daily_cycle";
+
     private Coroutine refreshCoroutine;
     public TagFoundEvent tagEvent;
 
@@ -213,6 +215,7 @@ public class InkWriter : MonoBehaviour {
                 lastSaveableTags = (string) InkWriter.main.story.variablesState["lastSavedTags"];
                 Debug.Log ("Tags at load point: " + lastSaveableTags);
                 loading = true;
+                if (mainWriter && eventToGoToInCaseOfLoad != "") { GoToKnot (eventToGoToInCaseOfLoad); };
             } else { // no saved json -> go to "start" knot
                 if (mainWriter) { GoToKnot ("start"); };
             }
