@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.00.00">
 	<object class="Event" id="{32131331-f430-411a-9344-3b9236729633}">
 		<property name="name">
-			<value>LDJ47_SFX23</value>
+			<value>LDJ47_Small_Interaction6</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>
