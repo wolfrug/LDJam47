@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
     public Animator levelUpAnimator;
     private int currentLevel = 1;
     private float currentXP = 0f;
+    private bool diedThisLoop = false;
     public Progressor mainXPProgressor;
 
     void Awake () {
@@ -56,6 +57,8 @@ public class GameManager : MonoBehaviour {
         ES3.Save<float> ("LDJam47_CurrentXP", currentXP);
         InkWriter.main.story.variablesState["loopNumber"] = (int) InkWriter.main.story.variablesState["loopNumber"] + 1;
         InkWriter.main.story.variablesState["level"] = currentLevel;
+        InkWriter.main.story.variablesState["completedTasksLastLoop"] = TaskMenuController.instance.finishedTasks.Count;
+        InkWriter.main.story.variablesState["diedLastLoop"] = diedThisLoop;
         InkWriter.main.SaveStory ();
         SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
     }
@@ -89,6 +92,7 @@ public class GameManager : MonoBehaviour {
 
     public void PlayerOutOfEnergy () {
         playerAgent.Kill ();
+        diedThisLoop = true;
         Doozy.Engine.GameEventMessage.SendEvent ("PlayerDead");
     }
 
